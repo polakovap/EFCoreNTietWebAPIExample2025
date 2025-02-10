@@ -12,20 +12,27 @@ namespace ProductModel
     {
          public DbSet<Product> Products { get; set; }
 
+        public DbSet<Supplier> Suppliers { get; set; }
+
+
         static public bool inProduction;
         public ProductDBContext()
         {
             
         }
-
+        public ProductDBContext(DbContextOptions<ProductDBContext> options)
+            : base(options)
+        {
+            // Ensure Migrations are updated before seeding or using this context
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             
-            var myconnectionstring = "Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = ProductCoreDB-2025";
-            optionsBuilder.UseSqlServer(myconnectionstring)
-              .LogTo(Console.WriteLine,
-                     new[] { DbLoggerCategory.Database.Command.Name },
-                     LogLevel.Information);
+            //var myconnectionstring = "Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = ProductCoreDB-2025";
+            //optionsBuilder.UseSqlServer(myconnectionstring)
+            //  .LogTo(Console.WriteLine,
+            //         new[] { DbLoggerCategory.Database.Command.Name },
+            //         LogLevel.Information);
         }
 
 
