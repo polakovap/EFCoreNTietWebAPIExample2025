@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductModel;
 using ProductWebAPI2025.ViewModel;
@@ -20,6 +21,7 @@ namespace ProductWepAPI.Controllers
         }
         // Must decorate for swagger
         [HttpGet]
+        [Authorize]
         public IEnumerable<Product> Get()
         {
             return _repository.GetAll();
@@ -32,6 +34,7 @@ namespace ProductWepAPI.Controllers
         }
 
         [HttpPost("AddProduct/Reorder")]
+        [Authorize]
 
         public dynamic AddProductReorderLevel(ProductReorderViewModel vm)
         {
@@ -45,6 +48,19 @@ namespace ProductWepAPI.Controllers
                 return new { Message = "Product not found" };
             }
             return new { Message = "Reorder Level Updated", Product = product };
+        }
+
+        [HttpPost("AddProduct/New")]
+        [Authorize]
+
+        public dynamic AddProduct(Product P)
+        {
+            if (P == null)
+            {
+                return new { Message = "No data" };
+            }
+            _repository.Add(P);
+            return(P);
         }
 
     }

@@ -65,7 +65,7 @@ namespace DataServices
             _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserToken);
            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            // New Blazor Get
+            // New MS J Get
             JsonSerializerOptions options = new()
             {
                 ReferenceHandler = ReferenceHandler.Preserve,
@@ -117,7 +117,7 @@ namespace DataServices
             }
         }
 
-        public async void Post<T>(string EndPoint, T p)
+        public async Task<T> Post<T>(string EndPoint, T p)
         {
             
        
@@ -131,7 +131,9 @@ namespace DataServices
                 PropertyNameCaseInsensitive = true,
                 WriteIndented = true
             };
-            await _httpClient.PostAsJsonAsync(EndPoint, p,options:options);
+            var response = await _httpClient.PostAsJsonAsync(EndPoint, p, options);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<T>(options);
 
         }
 

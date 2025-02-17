@@ -14,7 +14,7 @@ namespace DataServices
         Task<List<T>> getCollection<T>(string EndPoint);
 
         Task<T> getSingle<T>(string EndPoint, int Id);
-        void Post<T>(string EndPoint, T p);
+        Task<T> Post<T>(string EndPoint, T p);
         void Put<T>(string EndPoint, T p);
         Task<bool> login(string username, string password);
     }

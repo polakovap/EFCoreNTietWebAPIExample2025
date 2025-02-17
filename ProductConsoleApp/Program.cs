@@ -28,15 +28,24 @@ namespace ProductConsoleApp
                     Console.WriteLine("{0} Costs {1:C} ", product.Description, product.UnitPrice);
             }
 
-            IHttpClientService client = new HttpClientService(new HttpClient() { BaseAddress = new Uri("https://localhost:7218") });
+            IHttpClientService client = new HttpClientService(new HttpClient() 
+                    { BaseAddress = new Uri("https://localhost:7218") });
 
             if (client.login("paul.powell@atu.ie", "Rad302$1").Result)
             {
-                Console.WriteLine("Logged In");
-                Console.WriteLine("Token is: {0}", client.UserToken);
+                var products = client.getCollection<Product>("api/Products").Result;
+                Console.WriteLine("Product Count {0}", products.Count);
+               Product P = client.Post<Product>("api/Products/AddProduct/New", 
+                   new Product { Description = "Glass Hammer", 
+                                UnitPrice = 100, ReorderLevel=10, ReorderQuantity=5, StockOnHand=20 }).Result;
+                Console.WriteLine("{0} {1}", P.ID, P.Description);
+                
             }
-            var products = client.getCollection<Product>("api/Products").Result;
-            Console.WriteLine("Product Count {0}", products.Count);
+            //Console.WriteLine("Logged In");
+            //Console.WriteLine("Token is: {0}", client.UserToken);
+
+
+
             Console.ReadKey();
         }
     }
