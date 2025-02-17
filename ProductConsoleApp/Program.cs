@@ -35,9 +35,12 @@ namespace ProductConsoleApp
             {
                 var products = client.getCollection<Product>("api/Products").Result;
                 Console.WriteLine("Product Count {0}", products.Count);
+
                Product P = client.Post<Product>("api/Products/AddProduct/New", 
                    new Product { Description = "Glass Hammer", 
-                                UnitPrice = 100, ReorderLevel=10, ReorderQuantity=5, StockOnHand=20 }).Result;
+                                UnitPrice = 100, ReorderLevel=10, 
+                       ReorderQuantity=5, StockOnHand=20 }).Result;
+
                 Console.WriteLine("{0} {1}", P.ID, P.Description);
                 
             }

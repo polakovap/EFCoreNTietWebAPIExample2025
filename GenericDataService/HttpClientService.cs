@@ -119,8 +119,6 @@ namespace DataServices
 
         public async Task<T> Post<T>(string EndPoint, T p)
         {
-            
-       
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserToken);
@@ -134,7 +132,6 @@ namespace DataServices
             var response = await _httpClient.PostAsJsonAsync(EndPoint, p, options);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<T>(options);
-
         }
 
         public async void Put<T>(string EndPoint, T p)
