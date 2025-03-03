@@ -12,8 +12,12 @@ namespace ProductWebAPI2025
 {
     public class Program
     {
+
         public static void Main(string[] args)
         {
+            // For CORS on localhost
+            string LocalAllowSpecificOrigins = "_localAllowSpecificOrigins";
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -54,7 +58,19 @@ namespace ProductWebAPI2025
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Tokens:Key"]))
                 };
             });
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: LocalAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      // current Blazor localhost endpoints See launchSettings.json in Blazor app
+                                      builder.WithOrigins("https://localhost:7104",
+                                                          "http://localhost:30571",
+                                                          "http://localhost:5152")
+                                                            .AllowAnyHeader()
+                                                            .AllowAnyMethod();
+                                  });
+            });
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -121,6 +137,9 @@ namespace ProductWebAPI2025
 
             app.UseAuthentication();
             app.UseRouting();
+            
+            app.UseCors(LocalAllowSpecificOrigins);
+
             app.UseAuthorization();
 
 

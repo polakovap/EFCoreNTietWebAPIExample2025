@@ -21,7 +21,7 @@ namespace ProductWepAPI.Controllers
         }
         // Must decorate for swagger
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public IEnumerable<Product> Get()
         {
             return _repository.GetAll();
@@ -34,7 +34,7 @@ namespace ProductWepAPI.Controllers
         }
 
         [HttpPost("AddProduct/Reorder")]
-        [Authorize]
+        //[Authorize]
 
         public dynamic AddProductReorderLevel(ProductReorderViewModel vm)
         {
@@ -51,7 +51,7 @@ namespace ProductWepAPI.Controllers
         }
 
         [HttpPost("AddProduct/New")]
-        [Authorize]
+        //[Authorize]
 
         public dynamic AddProduct(Product P)
         {
