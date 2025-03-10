@@ -50,7 +50,7 @@ namespace ProductBlazorApp.Pages
            
             await httpService.Put(@"api\Products\AddProduct\Update", Product);
             toastService.ShowInfo($"Product Updated {Product.Description}");  
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/productoverview");
         }
 
         private void HandleInvalidSubmit()
