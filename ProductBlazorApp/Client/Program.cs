@@ -26,7 +26,7 @@ namespace ProductBlazorApp
                 client.BaseAddress = new Uri("https://localhost:7218/");
             });
             builder.Services.AddBlazoredToast();
-            builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
+            builder.Services.AddSingleton<ILocalStorageService, LocalStorageService>();
             builder.Services.AddSingleton<AppState>();
             //builder.Services.AddScoped<ToastService>();
 

@@ -26,7 +26,8 @@ namespace ProductBlazorApp.Pages
             if (httpService != null)
             {
                 toastService.ShowInfo($"Products Loaded", settings => settings.IconType = IconType.None);
-                products = await httpService.getCollection<Product>("api/products");
+                if (await httpService.GetTokenAsync() != null)
+                    products = await httpService.getCollection<Product>("api/products");
 
             }
 
@@ -36,6 +37,7 @@ namespace ProductBlazorApp.Pages
             }
             await base.OnInitializedAsync();
         }
+        
         private void InitialiseProducts()
         {
             //products = new List<Product>

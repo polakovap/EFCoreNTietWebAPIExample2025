@@ -16,10 +16,11 @@ namespace ProductModel
             this.context = context;
         }
 
-        public void Add(Product entity)
+        public Product Add(Product entity)
         {
             context.Products.Add(entity);
             context.SaveChanges();
+            return entity;
         }
 
         public void AddRange(IEnumerable<Product> entities)
@@ -66,6 +67,13 @@ namespace ProductModel
                 return p;
             }
             return null;
+        }
+
+        public Product Update(Product entity)
+        {
+            context.Products.Update(entity);
+            context.SaveChanges();
+            return entity;
         }
     }
 }

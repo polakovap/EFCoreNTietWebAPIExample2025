@@ -34,6 +34,13 @@ namespace ProductWepAPI.Controllers
             return new { id, name };
         }
 
+        [HttpGet("GetProduct/{id:int}")]
+        //[Authorize]
+        public Product GetProduct(int id)
+        {
+            return _repository.Get(id);
+        }
+
         [HttpPost("AddProduct/Reorder")]
         //[Authorize]
 
@@ -63,6 +70,20 @@ namespace ProductWepAPI.Controllers
             _repository.Add(P);
             return(P);
         }
+
+        [HttpPut("AddProduct/Update")]
+        //[Authorize]
+
+        public dynamic UpdateProduct(Product P)
+        {
+            if (P == null)
+            {
+                return new { Message = "No data" };
+            }
+            _repository.Update(P);
+            return (P);
+        }
+
 
     }
 
