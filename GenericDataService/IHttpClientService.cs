@@ -15,7 +15,9 @@ namespace DataServices
 
         Task<T> getSingle<T>(string EndPoint, int Id);
         Task<T> Post<T>(string EndPoint, T p);
-        void Put<T>(string EndPoint, T p);
+        public Task<Token> GetTokenAsync();
+        Task<T> Put<T>(string EndPoint, T p);
+        Task Initialize();
         Task<bool> login(string username, string password);
     }
 }

@@ -12,6 +12,7 @@ namespace ProductWepAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Sales Manager")]
     public class ProductsController : ControllerBase
     {
         private readonly IProduct<Product> _repository;

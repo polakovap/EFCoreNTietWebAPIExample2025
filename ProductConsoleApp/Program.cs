@@ -29,7 +29,7 @@ namespace ProductConsoleApp
             }
 
             IHttpClientService client = new HttpClientService(new HttpClient() 
-                    { BaseAddress = new Uri("https://localhost:7218") });
+                    { BaseAddress = new Uri("https://localhost:7218") },null);
 
             if (client.login("paul.powell@atu.ie", "Rad302$1").Result)
             {

@@ -1,5 +1,6 @@
 ﻿@page "/productoverview"
-<h3>ProductOverview</h3>
+@using Blazored.Toast.Services
+@inject IToastService ToastService
 
 <h1 class="page-title">All Products</h1>
 @if (products == null)

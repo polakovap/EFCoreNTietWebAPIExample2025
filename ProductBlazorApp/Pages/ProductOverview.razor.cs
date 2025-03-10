@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿
+using Blazored.Toast.Configuration;
+using Blazored.Toast.Services;
+using DataServices;
+using Microsoft.AspNetCore.Components;
 using ProductBlazorApp.Services;
 using ProductModel;
 using System.ComponentModel.DataAnnotations;
@@ -10,14 +14,26 @@ namespace ProductBlazorApp.Pages
         List<Product> products = new List<Product>();
 
         [Inject]
-        IProductService? productService { get; set; }
-
-        
+        //IProductService? productService { get; set; }
+        IHttpClientService? httpService { get; set; }
+        [Inject]
+        public IToastService toastService { get; set; }
         protected override async Task OnInitializedAsync()
         {
             //InitialiseProducts();
-            if(productService != null)
-                products = await productService.getProducts();
+            //if(productService != null)
+            //    products = await productService.getProducts();
+            if (httpService != null)
+            {
+                toastService.ShowInfo($"Products Loaded", settings => settings.IconType = IconType.None);
+                products = await httpService.getCollection<Product>("api/products");
+
+            }
+
+            if (products == null)
+            {
+                toastService.ShowInfo($"No Products Loaded. Check Login", settings => settings.IconType = IconType.None);
+            }
             await base.OnInitializedAsync();
         }
         private void InitialiseProducts()

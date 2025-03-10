@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericDataService", "Gener
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductBlazorApp", "ProductBlazorApp\ProductBlazorApp.csproj", "{8BD7C7A2-ED16-4622-B5E0-9D25C21988FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorDataServices", "BlazorDataServices\BlazorDataServices.csproj", "{F1263204-9921-41B9-8FF4-26C82A074965}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{8BD7C7A2-ED16-4622-B5E0-9D25C21988FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BD7C7A2-ED16-4622-B5E0-9D25C21988FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BD7C7A2-ED16-4622-B5E0-9D25C21988FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1263204-9921-41B9-8FF4-26C82A074965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1263204-9921-41B9-8FF4-26C82A074965}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1263204-9921-41B9-8FF4-26C82A074965}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1263204-9921-41B9-8FF4-26C82A074965}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -11,33 +14,32 @@ using ViewModels;
 
 namespace DataServices
 {
-
+  
     public enum AUTHSTATUS { NONE, OK, INVALID, FAILED }
-    public class HttpClientService : IHttpClientService, IDisposable
+    public class HttpClientService : IHttpClientService
     {
         private readonly HttpClient _httpClient;
-       
-        public HttpClientService(HttpClient httpClient
-            )
+        private readonly ILocalStorageService _localStorageService;
+        public HttpClientService(HttpClient httpClient, 
+            ILocalStorageService localStorageService)
         {
             _httpClient = httpClient;
-            
+            _localStorageService = localStorageService;
         }
 
         public Token Token_held { get ; private set; }
         public string UserToken { get ; set; }
         public AUTHSTATUS UserStatus { get ; set; }
 
-        public void Dispose()
-        {
-            
-        }
-
         public async Task<List<T>> getCollection<T>(string EndPoint)
         {
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserToken);
+            if (Token_held == null && _localStorageService != null)
+                Token_held = await _localStorageService.GetItem<Token>("token");
+            // Might be unauthenticated call so don't add header
+            if(Token_held != null)
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token_held.AccessToken);
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             // New Blazor Get
             try
@@ -63,9 +65,11 @@ namespace DataServices
         {
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserToken);
-           _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            // New MS J Get
+            if (Token_held == null)
+                Token_held = await _localStorageService.GetItem<Token>("token");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token_held.AccessToken);
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            // New Blazor Get
             JsonSerializerOptions options = new()
             {
                 ReferenceHandler = ReferenceHandler.Preserve,
@@ -78,7 +82,18 @@ namespace DataServices
             var response = await _httpClient.GetFromJsonAsync<T>(Endpoint +id.ToString(),options );
             return response;
         }
+        public async Task Initialize()
+        {
 
+            if (_localStorageService == null) return;
+            Token_held = await _localStorageService.GetItem<Token>("token");
+        }
+
+        public async Task<Token> GetTokenAsync()
+        {
+            if (_localStorageService == null) return null;
+            return await _localStorageService.GetItem<Token>("token");
+        }
         public async Task<bool> login(string username, string password)
         {
             
@@ -98,6 +113,8 @@ namespace DataServices
                     Console.WriteLine(resultContent.AccessToken);
                     UserToken = resultContent.AccessToken;
                     UserStatus = AUTHSTATUS.OK;
+                    if(_localStorageService != null)
+                        await _localStorageService.SetItem("token", resultContent);
                     return true;
                 }
                 else
@@ -119,9 +136,13 @@ namespace DataServices
 
         public async Task<T> Post<T>(string EndPoint, T p)
         {
+            if (Token_held == null && _localStorageService != null)
+                Token_held = await _localStorageService.GetItem<Token>("token");
+            // Might be unauthenticated call so don't add header
+            if (Token_held != null)
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token_held.AccessToken);
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserToken);
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             JsonSerializerOptions options = new()
             {
@@ -129,18 +150,23 @@ namespace DataServices
                 PropertyNameCaseInsensitive = true,
                 WriteIndented = true
             };
-            var response = await _httpClient.PostAsJsonAsync(EndPoint, p, options);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>(options);
-        }
+            var ret = await _httpClient.PostAsJsonAsync(EndPoint, p,options:options);
+            if (ret.IsSuccessStatusCode)
+            {
+                return await ret.Content.ReadFromJsonAsync<T>();
+            }
+            return default;
+         }
 
-        public async void Put<T>(string EndPoint, T p)
+        public async Task<T> Put<T>(string EndPoint, T p)
         {
-            
-            
+            if (Token_held == null && _localStorageService != null)
+                Token_held = await _localStorageService.GetItem<Token>("token");
+            // Might be unauthenticated call so don't add header
+            if (Token_held != null)
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token_held.AccessToken);
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserToken);
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             JsonSerializerOptions options = new()
             {
@@ -149,7 +175,12 @@ namespace DataServices
                 WriteIndented = true
             };
 
-            await _httpClient.PutAsJsonAsync(EndPoint, p,options:options);
+            var ret = await _httpClient.PutAsJsonAsync(EndPoint, p, options: options);
+            if (ret.IsSuccessStatusCode)
+            {
+                return await ret.Content.ReadFromJsonAsync<T>();
+            }
+            return default;
         }
     }
 }
